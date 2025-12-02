@@ -1,0 +1,312 @@
+/* Color Palette - Inverted for better illustration visibility */
+:root {
+    --primary-dark: #070D59;
+    --primary-accent: #1F3C88;
+    --secondary-accent: #5893D4;
+    --light-text: #CEDDEF;
+    --light-bg: #CEDDEF;
+    --dark-text: #070D59;
+    --navbar-height: 64px;
+}
+
+/* General Styles */
+html, body {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-top: var(--navbar-height);
+    overflow-x: hidden;
+    background-color: var(--light-bg);
+    color: var(--dark-text);
+}
+
+/* Fixed Navigation Bar */
+.navbar {
+    background-color: var(--primary-dark) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+}
+
+.navbar-brand {
+    color: var(--light-text) !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.navbar-toggler {
+    border-color: rgba(206, 221, 239, 0.3);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(206, 221, 239, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.nav-link {
+    color: var(--light-text) !important;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 8px 16px !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--secondary-accent) !important;
+}
+
+/* Hero Section */
+.hero-section {
+    margin-top: 0;
+    padding: 30px 20px;
+    background-color: var(--primary-accent);
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    color: var(--light-text);
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.hero-subtitle {
+    color: var(--light-text);
+    font-size: 1.2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+/* Main Content Area */
+.main-content {
+    background-color: var(--light-bg);
+    padding: 60px 20px;
+}
+
+/* Feature Rows */
+.feature-row {
+    margin-bottom: 80px;
+}
+
+.feature-row:last-child {
+    margin-bottom: 0;
+}
+
+/* Feature Cards - Light background with dark text */
+.feature-card {
+    background-color: white;
+    border: 1px solid rgba(7, 13, 89, 0.15);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--secondary-accent);
+}
+
+.feature-title {
+    color: var(--dark-text);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: capitalize;
+}
+
+.feature-description {
+    color: var(--primary-accent);
+    font-size: 1rem;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* Primary Button - Exact same as auth page */
+.custom-btn {
+    display: inline-block;
+    background-color: var(--secondary-accent);
+    border: none;
+    color: white;
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.custom-btn:hover {
+    background-color: #4a7bc0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(88, 147, 212, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.custom-btn:active {
+    transform: translateY(0);
+}
+
+/* Illustration Containers - Plain, no borders, light background */
+.illustration-container {
+    text-align: center;
+    padding: 20px;
+    background-color: transparent;
+}
+
+.feature-illustration {
+    max-width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Footer Section */
+.footer-section {
+    background-color: var(--primary-dark);
+    padding: 60px 20px 30px;
+    margin-top: 60px;
+}
+
+.footer-title {
+    color: var(--light-text);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.footer-text {
+    color: var(--light-text);
+    font-size: 1rem;
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+.footer-copyright {
+    color: var(--light-text);
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(206, 221, 239, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .navbar {
+        padding: 12px 0;
+    }
+
+    .hero-section {
+        margin-top: 0;
+        padding: 60px 20px;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .feature-row {
+        margin-bottom: 60px;
+    }
+
+    .feature-card {
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .feature-title {
+        font-size: 2rem;
+    }
+
+    .feature-illustration {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero-section {
+        margin-top: 0;
+        padding: 40px 15px;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .main-content {
+        padding: 40px 15px;
+    }
+
+    .feature-row {
+        margin-bottom: 40px;
+    }
+
+    .feature-card {
+        padding: 25px;
+    }
+
+    .feature-title {
+        font-size: 1.8rem;
+    }
+
+    .feature-description {
+        font-size: 0.95rem;
+    }
+
+    .custom-btn {
+        min-width: 150px;
+        font-size: 1rem;
+        padding: 12px 18px;
+    }
+
+    .feature-illustration {
+        max-height: 250px;
+    }
+
+    .footer-section {
+        padding: 40px 15px 20px;
+    }
+
+    .footer-title {
+        font-size: 1.3rem;
+    }
+
+    .footer-text {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-title {
+        font-size: 1.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .feature-title {
+        font-size: 1.5rem;
+    }
+}
