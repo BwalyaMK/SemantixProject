@@ -1,0 +1,39 @@
+{
+  "name": "semantix",
+  "version": "1.0.0",
+  "description": "A semantic search and AI-powered platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BwalyaMK/Research.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/BwalyaMK/Research/issues"
+  },
+  "homepage": "https://github.com/BwalyaMK/Research#readme",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.0",
+    "express-session": "^1.18.2",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.3",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
