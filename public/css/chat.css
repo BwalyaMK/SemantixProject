@@ -1,0 +1,928 @@
+/* Semantix Chat Interface Styles */
+
+:root {
+    --primary-dark: #070D59;
+    --primary-accent: #1F3C88;
+    --secondary-accent: #5893D4;
+    --light-text: #CEDDEF;
+    --light-bg: #CEDDEF;
+    --dark-text: #070D59;
+    /* Match navbar height used elsewhere (dashboard.css) so sidebars align */
+    --nav-height: 64px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--light-bg);
+    color: var(--dark-text);
+    overflow-x: hidden;
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--primary-dark) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+}
+
+.navbar-brand {
+    color: var(--light-text) !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.navbar-toggler {
+    border-color: rgba(206, 221, 239, 0.3);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(206, 221, 239, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.nav-link {
+    color: var(--light-text) !important;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 8px 16px !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--secondary-accent) !important;
+}
+
+
+/* Main Chat Container */
+.chat-container {
+    display: flex;
+    height: calc(100vh - var(--nav-height));
+    margin-top: var(--nav-height);
+    position: relative;
+}
+
+/* Sidebar Common Styles */
+.chat-history-sidebar,
+.pdf-sidebar {
+    background-color: white;
+    border-right: 1px solid rgba(7, 13, 89, 0.1);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    /* make sidebars span the full chat-container height so they align with navbar */
+    height: 100%;
+}
+
+.chat-history-sidebar {
+    width: 250px;
+    border-left: none;
+}
+
+.pdf-sidebar {
+    width: 250px;
+    border-right: none;
+    border-left: 1px solid rgba(7, 13, 89, 0.1);
+}
+
+.sidebar-header {
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(7, 13, 89, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-dark);
+    color: var(--light-text);
+}
+
+.sidebar-header h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--light-text);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-icon:hover {
+    background-color: rgba(206, 221, 239, 0.1);
+}
+
+/* Chat History Sidebar */
+.new-chat-btn {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.9rem;
+    background-color: var(--secondary-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    white-space: nowrap;
+}
+
+.new-chat-btn:hover {
+    background-color: #4a7bc0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(88, 147, 212, 0.14);
+}
+
+.new-chat-btn i {
+    transition: margin 0.15s ease, font-size 0.12s ease;
+}
+
+/* When sidebar is collapsed, display the new-chat button as a compact icon-only control */
+.chat-history-sidebar.collapsed .new-chat-btn {
+    width: 48px;
+    height: 48px;
+    padding: 0.45rem;
+    border-radius: 50%;
+    margin: 0.75rem auto;
+    justify-content: center;
+}
+
+.chat-history-sidebar.collapsed .new-chat-btn i {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+/* New chat area separator and layout */
+.chat-new-area {
+    padding: 1rem 0.9rem 0.75rem 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(7, 13, 89, 0.06);
+    background: transparent;
+}
+
+.chat-new-area .new-chat-btn {
+    width: 100%;
+}
+
+.chat-history-sidebar.collapsed .chat-new-area {
+    padding: 0.5rem 0 0.75rem 0;
+}
+
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.chat-item {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid transparent;
+    position: relative;
+}
+
+.chat-item:hover {
+    background-color: rgba(88, 147, 212, 0.1);
+}
+
+.chat-item.active {
+    background-color: rgba(88, 147, 212, 0.15);
+    border-color: var(--secondary-accent);
+}
+
+.chat-item-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    color: var(--dark-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-item-preview {
+    font-size: 0.85rem;
+    color: rgba(7, 13, 89, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-item-actions {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+}
+
+.chat-item:hover .chat-item-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.chat-item-actions button {
+    background: none;
+    border: none;
+    color: var(--dark-text);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    transition: background-color 0.2s ease;
+}
+
+.chat-item-actions button:hover {
+    background-color: rgba(7, 13, 89, 0.1);
+}
+
+/* PDF Sidebar */
+.pdf-limit-notice {
+    padding: 0.75rem 1rem;
+    background-color: rgba(88, 147, 212, 0.1);
+    border-bottom: 1px solid rgba(7, 13, 89, 0.1);
+    font-size: 0.85rem;
+    color: var(--dark-text);
+    display: flex;
+    align-items: center;
+}
+
+.pdf-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    color: rgba(7, 13, 89, 0.5);
+    padding: 2rem 1rem;
+}
+
+.empty-state i {
+    color: rgba(7, 13, 89, 0.3);
+}
+
+.empty-state p {
+    margin: 0.5rem 0 0.25rem 0;
+    font-weight: 600;
+}
+
+.empty-state small {
+    font-size: 0.85rem;
+}
+
+.pdf-item {
+    background-color: rgba(88, 147, 212, 0.05);
+    border: 1px solid rgba(88, 147, 212, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.pdf-item:hover {
+    background-color: rgba(88, 147, 212, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.pdf-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.pdf-item-icon {
+    color: var(--secondary-accent);
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.pdf-item-info {
+    flex: 1;
+}
+
+.pdf-item-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--dark-text);
+    word-break: break-word;
+    margin-bottom: 0.25rem;
+}
+
+.pdf-item-size {
+    font-size: 0.8rem;
+    color: rgba(7, 13, 89, 0.6);
+}
+
+.pdf-item-delete {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.pdf-item-delete:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.pdf-total {
+    padding: 1rem;
+    border-top: 1px solid rgba(7, 13, 89, 0.1);
+    background-color: rgba(88, 147, 212, 0.05);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.pdf-total strong {
+    color: var(--secondary-accent);
+}
+
+/* PDF Upload area (moved from chat input into sidebar) */
+.pdf-upload-area {
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    border-bottom: 1px solid rgba(7, 13, 89, 0.06);
+}
+
+.pdf-upload-area .new-pdf-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--secondary-accent);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pdf-upload-area .new-pdf-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(88, 147, 212, 0.14);
+}
+
+.pdf-upload-area .new-pdf-btn i {
+    font-size: 1rem;
+}
+
+/* Main Chat Area */
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--light-bg);
+    /* allow flex children to shrink properly so the messages container
+       can fill available height inside the column layout */
+    min-height: 0;
+}
+
+/* Mode Toggle */
+.mode-toggle-container {
+    padding: 1rem 1.5rem;
+    background-color: white;
+    border-bottom: 1px solid rgba(7, 13, 89, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* Compact toggle when placed inside the left sidebar */
+.chat-history-sidebar .mode-toggle-container.sidebar-mode-toggle {
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border-top: 1px solid rgba(7, 13, 89, 0.04);
+    border-bottom: none;
+    justify-content: center;
+}
+
+.chat-history-sidebar .mode-toggle {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(7, 13, 89, 0.03);
+    padding: 0.15rem;
+    border-radius: 8px;
+}
+
+.chat-history-sidebar .mode-toggle .mode-option {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.82rem;
+    border-radius: 6px;
+    color: var(--dark-text);
+}
+
+.chat-history-sidebar .mode-toggle .mode-option i {
+    margin-right: 0.45rem;
+    font-size: 0.9rem;
+}
+
+.chat-history-sidebar .mode-toggle .mode-option span {
+    vertical-align: middle;
+}
+
+/* Slightly reduce active highlight contrast in sidebar */
+.chat-history-sidebar .mode-toggle .mode-option.active {
+    background-color: rgba(88, 148, 212, 0.41);
+    color: var(--dark-text);
+}
+
+.mode-toggle {
+    display: flex;
+    background-color: rgba(7, 13, 89, 0.05);
+    border-radius: 8px;
+    padding: 0.25rem;
+}
+
+.mode-option {
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--dark-text);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.mode-option:hover {
+    background-color: rgba(88, 147, 212, 0.1);
+}
+
+.mode-option.active {
+    background-color: var(--secondary-accent);
+    color: white;
+}
+
+.mode-indicator {
+    font-size: 0.85rem;
+    color: rgba(7, 13, 89, 0.7);
+    display: flex;
+    align-items: center;
+}
+
+/* Messages Container */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    /* ensure the messages container can shrink/grow properly inside flex
+       parents on some browsers (prevents the input from visually separating) */
+    min-height: 0;
+    scroll-behavior: smooth;
+}
+
+.welcome-message {
+    text-align: center;
+    color: rgba(7, 13, 89, 0.6);
+    padding: 4rem 2rem;
+}
+
+.welcome-message i {
+    color: var(--secondary-accent);
+    opacity: 0.5;
+}
+
+.welcome-message h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark-text);
+}
+
+.message {
+    display: flex;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.message.user .message-avatar {
+    background-color: var(--secondary-accent);
+    color: white;
+}
+
+.message.assistant .message-avatar {
+    background-color: var(--primary-accent);
+    color: white;
+}
+
+.message-content {
+    flex: 1;
+    max-width: 800px;
+}
+
+.message-bubble {
+    background-color: white;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    line-height: 1.6;
+}
+
+.message.user .message-bubble {
+    background-color: rgba(88, 147, 212, 0.1);
+}
+
+.message-text {
+    color: var(--dark-text);
+}
+
+.message-text p {
+    margin-bottom: 0.75rem;
+}
+
+.message-text p:last-child {
+    margin-bottom: 0;
+}
+
+.message-text ul,
+.message-text ol {
+    margin-left: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.message-text code {
+    background-color: rgba(7, 13, 89, 0.08);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.message-text pre {
+    background-color: rgba(7, 13, 89, 0.08);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+}
+
+.message-text pre code {
+    background: none;
+    padding: 0;
+}
+
+.citation {
+    display: inline-block;
+    background-color: var(--secondary-accent);
+    color: white;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0 0.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.citation:hover {
+    background-color: var(--primary-accent);
+}
+
+.references {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(7, 13, 89, 0.1);
+}
+
+.references-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 0.5rem;
+}
+
+.reference-item {
+    font-size: 0.85rem;
+    color: rgba(7, 13, 89, 0.7);
+    margin-bottom: 0.25rem;
+    padding-left: 1rem;
+    text-indent: -1rem;
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--secondary-accent);
+    margin: 0 3px;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.7;
+    }
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+/* Chat Input */
+.chat-input-container {
+    padding: 1.25rem 1.5rem;
+    /* make the container visually blend with the chat area so it doesn't
+       feel like a separate section */
+    background-color: transparent;
+    border-top: none;
+}
+
+.chat-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    background-color: white;
+    border: 1px solid rgba(7, 13, 89, 0.06);
+    border-radius: 12px;
+    padding: 0.75rem;
+    /* soft lift/shadow so the input looks like a card integrated into the chat */
+    box-shadow: 0 8px 20px rgba(7, 13, 89, 0.06);
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.chat-input-wrapper .btn-icon {
+    color: var(--secondary-accent);
+    padding: 0.5rem;
+}
+
+.chat-input {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    resize: none;
+    font-size: 1rem;
+    line-height: 1.5;
+    max-height: 150px;
+    font-family: inherit;
+    color: var(--dark-text);
+}
+
+.chat-input::placeholder {
+    color: rgba(7, 13, 89, 0.5);
+}
+
+.btn-send {
+    background-color: var(--secondary-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-send:hover:not(:disabled) {
+    background-color: #4a7bc0;
+    transform: translateY(-2px);
+}
+
+.btn-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.input-hint {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: rgba(7, 13, 89, 0.5);
+    text-align: center;
+}
+
+/* Mobile Toggle Buttons */
+.mobile-toggle-btn {
+    display: none;
+    position: fixed;
+    bottom: 2rem;
+    background-color: var(--secondary-accent);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 999;
+    transition: all 0.3s ease;
+}
+
+.mobile-toggle-btn:hover {
+    background-color: #4a7bc0;
+    transform: scale(1.1);
+}
+
+.mobile-toggle-btn.left {
+    left: 1rem;
+}
+
+.mobile-toggle-btn.right {
+    right: 1rem;
+}
+
+/* Collapsed States */
+.chat-history-sidebar.collapsed {
+    width: 70px;
+}
+
+.chat-history-sidebar.collapsed .sidebar-header h5,
+.chat-history-sidebar.collapsed .btn-text,
+.chat-history-sidebar.collapsed .chat-list {
+    display: none;
+}
+
+.chat-history-sidebar.collapsed .new-chat-btn {
+    padding: 14px;
+    justify-content: center;
+}
+
+.chat-history-sidebar.collapsed .new-chat-btn i {
+    margin: 0;
+}
+
+.pdf-sidebar.collapsed {
+    width: 70px;
+}
+
+/* Hide the compact mode toggle when the chat history sidebar is collapsed */
+.chat-history-sidebar.collapsed .mode-toggle-container.sidebar-mode-toggle,
+.chat-history-sidebar.collapsed .mode-toggle {
+    display: none !important;
+}
+
+.pdf-sidebar.collapsed .sidebar-header h5,
+.pdf-sidebar.collapsed .notice-text,
+.pdf-sidebar.collapsed .pdf-limit-notice,
+.pdf-sidebar.collapsed .pdf-list,
+.pdf-sidebar.collapsed .pdf-total {
+    display: none;
+}
+
+/* Hide upload area when the PDF sidebar is collapsed */
+.pdf-sidebar.collapsed .pdf-upload-area,
+.pdf-sidebar.collapsed .pdf-upload-area .new-pdf-btn {
+    display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .chat-history-sidebar,
+    .pdf-sidebar {
+        position: fixed;
+        top: var(--nav-height);
+        height: calc(100vh - var(--nav-height));
+        z-index: 998;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .chat-history-sidebar {
+        left: 0;
+        transform: translateX(-100%);
+    }
+
+    .pdf-sidebar {
+        right: 0;
+        transform: translateX(100%);
+    }
+
+    .chat-history-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .pdf-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .mobile-toggle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mode-toggle-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mode-toggle {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .messages-container {
+        padding: 1rem;
+    }
+
+    .message-bubble {
+        padding: 0.875rem 1rem;
+    }
+
+    .chat-input-container {
+        padding: 1rem;
+    }
+
+    .mode-option span {
+        display: none;
+    }
+
+    .mode-indicator {
+        font-size: 0.8rem;
+    }
+}
+
+/* Scrollbar Styling */
+.chat-list::-webkit-scrollbar,
+.pdf-list::-webkit-scrollbar,
+.messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-list::-webkit-scrollbar-track,
+.pdf-list::-webkit-scrollbar-track,
+.messages-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-list::-webkit-scrollbar-thumb,
+.pdf-list::-webkit-scrollbar-thumb,
+.messages-container::-webkit-scrollbar-thumb {
+    background: rgba(88, 147, 212, 0.3);
+    border-radius: 3px;
+}
+
+.chat-list::-webkit-scrollbar-thumb:hover,
+.pdf-list::-webkit-scrollbar-thumb:hover,
+.messages-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(88, 147, 212, 0.5);
+}

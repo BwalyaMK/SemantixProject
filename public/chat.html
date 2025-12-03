@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Semantix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#">Semantix</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="chat.html">Chat</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#graph">Graph</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#search">Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main Chat Layout -->
+    <div class="chat-container">
+        <!-- Left Sidebar: Chat History -->
+        <aside class="chat-history-sidebar" id="chatHistorySidebar">
+            <div class="sidebar-header">
+                <h5>Chat History</h5>
+                <button class="btn-icon" id="toggleChatHistory" title="Collapse sidebar">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            <button class="new-chat-btn" id="newChatBtn" title="New Chat">
+                <i class="fas fa-plus me-2"></i><span class="btn-text">New Chat</span>
+            </button>
+            <div class="chat-list" id="chatList">
+                <!-- Chat items will be dynamically added here -->
+            </div>
+            <!-- Compact Mode Toggle placed at the bottom of the sidebar -->
+            <div class="mode-toggle-container sidebar-mode-toggle">
+                <div class="mode-toggle" id="modeToggleSidebar">
+                    <button class="mode-option active" data-mode="offline" title="Offline">
+                        <i class="fas fa-unlink"></i>
+                        <span>Offline</span>
+                    </button>
+                    <button class="mode-option" data-mode="online" title="Online">
+                        <i class="fas fa-globe"></i>
+                        <span>Online</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: Main Chat Area -->
+        <main class="chat-main">
+            <!-- Mode Toggle was moved to the left sidebar for less visual obstruction -->
+
+            <!-- Messages Area -->
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-message">
+                    <i class="fas fa-comments fa-3x mb-3"></i>
+                    <h3>Start a conversation</h3>
+                    <p>Upload PDFs to enable Document-Aware Mode or ask questions directly.</p>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Ask a question or discuss your documents..."
+                        rows="1"
+                    ></textarea>
+                    <button class="btn-send" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-hint">
+                    Press Enter to send, Shift+Enter for new line
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar: PDF List -->
+        <aside class="pdf-sidebar" id="pdfSidebar">
+            <div class="sidebar-header">
+                <button class="btn-icon" id="togglePdfSidebar" title="Collapse sidebar">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <h5>Documents</h5>
+            </div>
+            <!-- Upload area moved here from the chat input -->
+            <div class="pdf-upload-area">
+                <button class="new-pdf-btn" id="uploadPdfBtn" title="Upload PDFs">
+                    <i class="fas fa-file-pdf me-1"></i>
+                    <span>Upload PDFs</span>
+                </button>
+                <input type="file" id="pdfFileInput" accept=".pdf" style="display: none;" multiple>
+            </div>
+            <div class="pdf-list" id="pdfList">
+                <div class="empty-state">
+                    <i class="fas fa-folder-open fa-2x mb-2"></i>
+                    <p>No documents uploaded</p>
+                    <small>Use the "Upload PDFs" button above to add documents</small>
+                </div>
+            </div>
+            <div class="pdf-total" id="pdfTotal">
+                <span>Total: <strong>0 MB</strong></span>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Mobile Toggle Buttons -->
+    <button class="mobile-toggle-btn left" id="mobileToggleChatHistory">
+        <i class="fas fa-history"></i>
+    </button>
+    <button class="mobile-toggle-btn right" id="mobileTogglePdf">
+        <i class="fas fa-file-pdf"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>
