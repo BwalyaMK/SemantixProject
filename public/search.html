@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - Semantix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#">Semantix</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#graph">Graph</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="search.html">Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Search Container -->
+    <div class="search-container">
+        <!-- Search Header -->
+        <div class="search-header">
+            <div class="container-fluid">
+                <h1 class="search-title">Semantix Search</h1>
+                <p class="search-subtitle">Explore academic papers and resources semantically</p>
+                
+                <!-- Search Bar -->
+                <div class="search-bar-wrapper">
+                    <div class="search-bar">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            id="searchInput" 
+                            placeholder="Search for research papers, articles, books..."
+                        >
+                        <button class="search-btn" id="searchBtn">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                    
+                    <!-- Filter Toggle -->
+                    <button class="filter-toggle-btn" id="filterToggleBtn">
+                        <i class="fas fa-filter me-2"></i>Filters
+                        <i class="fas fa-chevron-down ms-2"></i>
+                    </button>
+                </div>
+
+                <!-- Filters Panel -->
+                <div class="filters-panel" id="filtersPanel">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label">Resource Type</label>
+                            <select class="filter-select" id="resourceTypeFilter">
+                                <option value="all">All Types</option>
+                                <option value="article">Article</option>
+                                <option value="book">Book</option>
+                                <option value="website">Website</option>
+                                <option value="preprint">Preprint</option>
+                                <option value="thesis">Thesis</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Duration</label>
+                            <select class="filter-select" id="durationFilter">
+                                <option value="all">All Time</option>
+                                <option value="past-year">Past Year</option>
+                                <option value="past-5-years">Past 5 Years</option>
+                                <option value="past-10-years">Past 10 Years</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Sort By</label>
+                            <select class="filter-select" id="sortFilter">
+                                <option value="relevance">Relevance</option>
+                                <option value="date-desc">Date (Newest)</option>
+                                <option value="date-asc">Date (Oldest)</option>
+                                <option value="name">Name (A-Z)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <button class="filter-reset-btn" id="resetFiltersBtn">
+                                <i class="fas fa-redo me-2"></i>Reset Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="search-content">
+            <div class="container-fluid">
+                <!-- Results Header -->
+                <div class="results-header" id="resultsHeader" style="display: none;">
+                    <div class="results-info">
+                        <span class="results-count" id="resultsCount">0 results</span>
+                        <span class="results-query">for "<span id="resultsQuery"></span>"</span>
+                    </div>
+                    <div class="active-filters" id="activeFilters"></div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingState" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>Searching academic databases...</p>
+                </div>
+
+                <!-- Welcome State -->
+                <div class="welcome-state" id="welcomeState">
+                    <i class="fas fa-book-open fa-4x"></i>
+                    <h2>Start Your Research</h2>
+                    <p>Search through OpenAlex, DOAJ, CORE and other academic databases</p>
+                    <div class="search-suggestions">
+                        <span class="suggestion-label">Try searching for:</span>
+                        <button class="suggestion-chip" onclick="searchSuggestion('machine learning')">Machine Learning</button>
+                        <button class="suggestion-chip" onclick="searchSuggestion('climate change')">Climate Change</button>
+                        <button class="suggestion-chip" onclick="searchSuggestion('quantum computing')">Quantum Computing</button>
+                    </div>
+                </div>
+
+                <!-- No Results State -->
+                <div class="no-results-state" id="noResultsState" style="display: none;">
+                    <i class="fas fa-search fa-4x"></i>
+                    <h2>No Results Found</h2>
+                    <p>We couldn't find any results for your search query.</p>
+                    <div class="no-results-suggestions">
+                        <p><strong>Try these suggestions:</strong></p>
+                        <ul>
+                            <li>Make your query more detailed or specific</li>
+                            <li>Check your spelling</li>
+                            <li>Try different keywords or synonyms</li>
+                            <li>Remove some filters to broaden your search</li>
+                        </ul>
+                        <button class="custom-btn" id="previousSearchBtn" style="display: none;">
+                            <i class="fas fa-arrow-left me-2"></i>Return to Previous Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results List -->
+                <div class="results-list" id="resultsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="previewModalTitle">Document Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="previewModalBody">
+                    <div class="preview-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading preview...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="custom-btn" id="openInChatFromPreview">
+                        <i class="fas fa-comments me-2"></i>Open in Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>

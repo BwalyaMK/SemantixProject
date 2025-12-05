@@ -1,0 +1,192 @@
+Semantix Chat Frontend Analysis
+===============================
+
+0. Semantix Project Overview
+----------------------------
+- **Purpose**: Semantix is an AI research tool for semantic discovery of knowledge. It aims to go beyond keyword and citation search by using embeddings to surface only the most relevant research resources for a query.
+- **Planned data sources**: OpenAlex is the primary source for scholarly metadata and articles, with future integrations planned for CORE and DOAJ so that multiple open-access sources can be searched in a unified way.
+- **Semantic search**: Instead of relying only on citations, Semantix will use text and metadata embeddings to measure semantic similarity between a user query and candidate papers. This allows it to:
+  - Retrieve studies that are conceptually related even when they do not directly cite each other.
+  - Score and rank results by semantic relevance.
+- **Chat-assisted exploration**: The system includes a chat interface where users can:
+  - Converse directly with an AI assistant in a general way.
+  - Ask the AI specifically about the sources returned from semantic search (document-aware chat), using uploaded PDFs or search-derived documents as context.
+- **Knowledge graphs**: A future graph view will visualize how studies relate to each other and to the user’s query, highlighting clusters of related work and important linking papers.
+- **Current implementation state** (high level):
+  - A working Express/Node backend with route stubs for auth, chat, graph, and AI.
+  - A fully designed chat UI and interaction flow in the frontend (this report’s main focus so far).
+  - AI integration through a Gemini-backed `/ai/chat` route, with placeholders for deeper OpenAlex/embedding/graph logic.
+
+1. Overall Structure
+--------------------
+- The chat UI is implemented as a standalone page `public/chat.html` styled by `public/css/chat.css` and driven by `public/js/chat.js`.
+- It uses Bootstrap 5.3.2 and Font Awesome 6.4.2 via CDNs.
+- Layout is a three-column flex container `.chat-container`:
+  - Left sidebar `.chat-history-sidebar`: chat history and mode toggle (offline/online).
+  - Center main area `.chat-main`: messages list and input.
+  - Right sidebar `.pdf-sidebar`: PDF upload and list.
+
+2. Layout & Navigation
+----------------------
+- Fixed top navbar with brand "Semantix" and links: Home, Chat (active), Graph, Search, Logout.
+- `--nav-height` CSS variable ensures the main chat container height aligns with the navbar (full viewport height minus nav).
+- `.chat-container` is a flex row taking full viewport height, with sidebars given fixed widths and the main area flexing.
+
+3. Left Sidebar: Chat History & Mode Toggle
+------------------------------------------
+- Sidebar DOM:
+  - Header with title "Chat History" and collapse button `#toggleChatHistory`.
+  - A prominent "New Chat" button `#newChatBtn`.
+  - Scrollable chat list `#chatList` for conversations.
+  - Compact mode toggle block at the bottom `.mode-toggle-container.sidebar-mode-toggle` with buttons for `Offline` and `Online` modes.
+- CSS:
+  - `.chat-history-sidebar` is 250px wide by default, full-height, white background, subtle border.
+  - When `.collapsed` class is applied, width shrinks to 70px and most text content (header title, button labels, chat list, and compact mode toggle) is hidden, leaving a compact icon-first layout.
+  - A compact circular version of the new chat button is shown in collapsed state.
+- JS behavior:
+  - `toggleChatHistorySidebar()` toggles between normal and collapsed states on desktop and uses an `.open` sliding overlay behavior on mobile (<992px).
+  - New chats are created via `handleNewChatClick()` which prompts for a name, falls back to `"New Chat"` if blank, and calls `createNewChat()`.
+  - Chats are stored in `state.chats` (each with `id`, `title`, `messages`, `createdAt`, `updatedAt`).
+  - `renderChatList()` renders `.chat-item`s with title, last-message preview, and inline action buttons for rename/delete.
+  - `autoNameChat()` derives a title from the first user message when the chat is still titled "New Chat".
+  - `deleteChat()` and `renameChat()` are exposed on `window` for inline `onclick` handlers.
+
+4. Center: Messages & Input
+---------------------------
+- Messages area:
+  - Container `#messagesContainer` with initial welcome state encouraging conversation and PDF upload.
+  - Each message is rendered as `.message.user` or `.message.assistant` with avatar, bubble, and text.
+  - Assistant messages optionally include references/citations.
+- CSS highlights:
+  - `.messages-container` is flex-1, scrollable, with smooth scroll and padding; `min-height: 0` avoids flex overflow issues.
+  - `.message` uses a fade-in animation.
+  - Different avatar background colors for user vs assistant, card-like `message-bubble` with shadow.
+  - Rich-text support inside message text: paragraphs, lists, inline `code`, and `pre code` blocks with monospaced font and background.
+  - `.typing-indicator` with animated dots for AI typing feedback.
+- JS behavior:
+  - `sendMessage()` reads input, adds a user message, clears and autoresizes textarea, then simulates an AI response after 2 seconds.
+  - While waiting, `state.isLoading` is true, send button disabled, and `showTypingIndicator()` appends a temporary assistant bubble with animated dots.
+  - `generateMockResponse()` decides the reply text based on:
+    - Whether any PDFs are loaded (`state.pdfs.length > 0`).
+    - Whether online mode is enabled (`state.isOnlineMode`).
+  - `addMessage()` pushes a message into `state.messages`, syncs it back to the current chat object, sets `updatedAt`, re-renders messages, and scrolls to bottom.
+  - `renderMessages()` regenerates the full messages HTML from `state.messages`. When empty, it shows the same welcome-state content as in the static HTML.
+  - `formatMessageContent()` (from truncated section) applies lightweight Markdown-like formatting (headings, bullet points, line breaks, code blocks) before injection into the DOM.
+  - User messages are escaped with `escapeHtml()` to avoid HTML injection.
+
+- Input area:
+  - `textarea#chatInput` with placeholder and `rows="1"` is wrapped with `chat-input-wrapper` and a Send button `#sendBtn`.
+  - Hint text under the input: "Press Enter to send, Shift+Enter for new line".
+  - CSS gives the input a card-style appearance: white background, rounded corners, light border, and soft shadow, integrated with the chat background.
+  - `autoResizeTextarea()` dynamically adjusts textarea height (up to 150px) according to content.
+  - `handleInputKeydown()` intercepts Enter without Shift to send the message instead of inserting a newline.
+
+5. Right Sidebar: PDF Upload & List
+-----------------------------------
+- Sidebar DOM:
+  - Header with collapse toggle `#togglePdfSidebar` and title "Documents".
+  - Upload block `.pdf-upload-area` with `Upload PDFs` button `#uploadPdfBtn` and hidden multiple file input `#pdfFileInput`.
+  - List container `#pdfList` starting with an empty state message.
+  - Footer total `#pdfTotal` showing aggregated size and limit.
+- CSS:
+  - `.pdf-sidebar` mirrors chat history sidebar in width and full-height behavior, with a border on the left.
+  - `.pdf-item` cards with subtle hover lift, icon, filename (wrapping), size, and a delete button.
+  - Total section `.pdf-total` with emphasis color for size.
+- JS behavior:
+  - `handlePdfUpload()` reacts to `change` on the hidden file input, validates files as PDFs, prevents duplicate filenames, and enforces a 100MB total size limit.
+  - Accepted files are passed to `addPdf()` which tracks PDFs in `state.pdfs` and `state.totalPdfSize` and logs to console (placeholder for backend upload).
+  - `renderPdfList()` updates the list markup and the total usage text (`Total: X.XX MB / 100 MB`).
+  - `removePdf()` prompts for confirmation and removes the selected PDF from state and UI; it is also exposed globally for inline `onclick`.
+
+6. Mode Management (Offline / Online / Document-Aware)
+------------------------------------------------------
+- A logical `state.currentMode` is maintained with flags `isOnlineMode` and the presence of PDFs.
+- Mode toggle UI:
+  - Buttons in the left sidebar (`.mode-toggle .mode-option`) share the same `data-mode` values (`offline`, `online`) and act as a synchronized group.
+- Behavior:
+  - `toggleMode(mode)` sets `state.isOnlineMode`, toggles the `active` class across all mode buttons in the DOM, and calls `updateModeIndicator()`.
+  - `updateModeIndicator()` determines a descriptive status string and icon based on:
+    - No documents + offline: Normal Mode.
+    - Documents + offline: Document-Aware Mode with document count.
+    - Online: Online Mode, optionally mentioning that documents are also used.
+  - If a dedicated `modeText` element exists, it is updated; otherwise, mode description is set as `aria-label` and `title` on `.mode-toggle` containers for accessibility and hover hints.
+
+7. Responsiveness & Mobile Behavior
+-----------------------------------
+- CSS media queries:
+  - `@media (max-width: 992px)` converts sidebars into fixed overlays from left/right, full height under the navbar, hidden by default using `transform: translateX()`. They can be opened via `.open` class.
+  - `@media (max-width: 768px)` reduces padding on messages and input, compresses mode toggle labels (hides text spans), and slightly adjusts font sizes.
+  - Custom scrollbar styling for chat list, PDF list, and messages container.
+- JS:
+  - `mobileToggleChatHistory` and `mobileTogglePdf` buttons toggle `.open` on their respective sidebars on small screens.
+  - On window resize to >= 992px, any mobile `open` classes are removed to normalize layout.
+
+8. Backend Integration Status
+-----------------------------
+- Route `routes/chat.js` currently only exposes a simple `GET /` JSON response `{ message: "Chat route ready" }`.
+- The frontend chat is fully mock-driven:
+  - Chat history, messages, and PDF metadata live only in browser memory (`state` object).
+  - AI replies are generated locally by `generateMockResponse()` with canned logic based on PDFs and online mode flags.
+  - Comments in `chat.js` indicate where real backend calls (for AI responses and PDF upload/processing) would be wired in.
+
+9. Summary of What Has Been Done
+--------------------------------
+- Designed and implemented a complete, responsive chat UI with:
+  - Multi-chat history management including naming, auto-naming, selection, and deletion.
+  - Message rendering with avatar differentiation, animation, basic Markdown-like formatting, and a typing indicator.
+  - PDF document management, including upload, validation, duplicate detection, size limiting, listing, and deletion.
+  - A mode system (normal/document-aware/online) with synchronized toggles and explanatory status text.
+  - Desktop and mobile sidebar behavior with collapsible/collapsing layouts and mobile overlay toggles.
+- Backend for the chat is not yet connected; the current implementation is a front-end prototype with mocked AI responses and console logs where server calls would later be integrated.
+
+10. Current Project File Structure
+---------------------------------
+- **Root**
+  - `.env` – environment variables, including API keys (e.g. Gemini).
+  - `server.js` – Express app entrypoint, middleware, and route mounting.
+  - `package.json`, `package-lock.json` – Node dependencies and scripts.
+  - `Reports.txt` – analysis and documentation for the chat UI and backend.
+  - `README.md` – project overview (currently minimal).
+
+- **public/** – static frontend assets served by Express.
+  - `index.html` – main dashboard/landing page.
+  - `login.html` – login screen.
+  - `chat.html` – chat interface page.
+  - `graph.html`, `search.html` – placeholders for graph and search views.
+  - `css/` – stylesheets (e.g. `chat.css`).
+  - `js/` – frontend scripts (e.g. `chat.js` for chat behavior).
+  - `img/` – images and illustrations used by the UI.
+
+- **routes/** – Express route modules.
+  - `auth.js` – authentication-related endpoints.
+  - `chat.js` – basic chat route stub.
+  - `graph.js` – graph-related route stub.
+  - `ai.js` – AI chat endpoint that calls the Gemini API (`/ai/chat`).
+
+- **models/** – data-layer stubs for future persistence.
+  - `user.js` – user model placeholder.
+  - `documents.js` – document metadata model placeholder.
+  - `embeddings.js` – vector/embedding model placeholder.
+
+- **ai/** – AI integration and orchestration stubs.
+  - `cloud-gemini.js` – planned Gemini cloud client/integration.
+  - `cloud-openalex.js` – planned OpenAlex integration for scholarly data.
+  - `local-embed.js` – planned local embedding utilities.
+  - `local-llm.js` – planned local LLM interface.
+
+- **config/** – configuration for auth and related services.
+  - `passport.js` – Passport strategy configuration (loaded by `server.js`).
+  - Additional config files as needed.
+
+- **db/** – database-related assets (currently minimal placeholder content).
+
+This structure separates frontend assets (`public/`), HTTP API routes (`routes/`), AI integration (`ai/`), and data models (`models/`), with `server.js` acting as the central entrypoint that wires everything together.
+
+11. Semantic Search & Embeddings Status
+--------------------------------------
+- **Planned**: The architecture and naming (e.g. `models/embeddings.js`, `ai/local-embed.js`, `ai/cloud-openalex.js`) indicate that Semantix is intended to use embeddings to perform semantic search over OpenAlex (and later CORE/DOAJ) content.
+- **Current implementation**:
+  - `models/embeddings.js`, `ai/local-embed.js`, `ai/cloud-gemini.js`, and `ai/cloud-openalex.js` are currently empty placeholders.
+  - There is no code yet that computes vector embeddings, stores them, or performs similarity search / ranking by embedding distance.
+  - No routes are exposing a semantic search API; `routes/graph.js` and any search-related frontend files are stubs.
+- **Effective behavior today**: Although the project is conceptually designed for embedding-based semantic search, the running system does not yet perform semantic retrieval. All “intelligent” behavior currently exposed to the user is via the Gemini-backed `/ai/chat` endpoint, which generates responses from prompts but does not query an embedding index.

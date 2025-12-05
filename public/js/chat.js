@@ -56,7 +56,11 @@ function initializeEventListeners() {
     // Chat input
     elements.chatInput.addEventListener('input', autoResizeTextarea);
     elements.chatInput.addEventListener('keydown', handleInputKeydown);
-    elements.sendBtn.addEventListener('click', sendMessage);
+   // elements.sendBtn.addEventListener('click', sendMessage);
+    elements.sendBtn.addEventListener('click', (e) => {
+    e.preventDefault(); // <--- STOPS THE "Cannot GET" / PAGE RELOAD
+    sendMessage(); });
+
 
     // PDF upload
     elements.uploadPdfBtn.addEventListener('click', () => elements.pdfFileInput.click());
@@ -192,7 +196,7 @@ function getLastMessagePreview(chat) {
 }
 
 // Message Management
-function sendMessage() {
+async function sendMessage() {
     const content = elements.chatInput.value.trim();
     if (!content || state.isLoading) return;
 
@@ -201,20 +205,44 @@ function sendMessage() {
     autoResizeTextarea();
     autoNameChat();
 
-    // Simulate AI response
     state.isLoading = true;
     elements.sendBtn.disabled = true;
     showTypingIndicator();
 
-    // In real app, this would call the backend API
-    setTimeout(() => {
-        const response = generateMockResponse(content);
+    try {
+        const payload = {
+            chatId: state.currentChatId,
+            message: content,
+            mode: state.currentMode,         // normal / document / online
+            pdfs: state.pdfs.map(p => p.name) // you can include IDs instead
+        };
+
+        const res = await fetch('/ai/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Server error');
+
+        const data = await res.json();
+
         hideTypingIndicator();
-        addMessage('assistant', response.content, response.citations);
+        // Support both `reply` (new) and `response` (older) keys
+        const replyText = data.reply || data.response || "";
+        addMessage('assistant', replyText, data.citations || []);
+
+    } catch (err) {
+        hideTypingIndicator();
+        addMessage('assistant', "I couldn't process that due to a server error. Please try again.");
+        console.error(err);
+
+    } finally {
         state.isLoading = false;
         elements.sendBtn.disabled = false;
-    }, 2000);
+    }
 }
+
 
 function addMessage(role, content, citations = null) {
     const message = {
@@ -340,37 +368,13 @@ function hideTypingIndicator() {
     if (indicator) indicator.remove();
 }
 
-function generateMockResponse(userMessage) {
-    const hasDocuments = state.pdfs.length > 0;
-    const isOnline = state.isOnlineMode;
-
-    let content = '';
-    let citations = null;
-
-    if (hasDocuments) {
-        content = `Based on the documents you've uploaded, I found relevant information about "${userMessage}". `;
-        content += `The key points are:\n\n`;
-        content += `• This is a detailed point from your document\n`;
-        content += `• Another important finding from the research\n`;
-        content += `• A third observation worth noting\n\n`;
-        content += `Would you like me to dive deeper into any of these aspects?`;
-        citations = [
-            `Document: ${state.pdfs[0].name}, Page 3`,
-            `Document: ${state.pdfs[0].name}, Page 7`
-        ];
-    } else if (isOnline) {
-        content = `Searching online for information about "${userMessage}"...\n\n`;
-        content += `Here's what I found:\n\n`;
-        content += `This is a comprehensive answer using online resources and my knowledge base. `;
-        content += `I can provide more details if needed.`;
-    } else {
-        content = `I understand you're asking about "${userMessage}". `;
-        content += `Without any documents uploaded, I'm working in normal mode. `;
-        content += `Upload PDFs to enable document-aware analysis, or switch to online mode for web-based research.`;
-    }
-
-    return { content, citations };
+function generateMockResponse() {
+    return {
+        content: "The server is not available.",
+        citations: null
+    };
 }
+
 
 // PDF Management
 function handlePdfUpload(event) {
